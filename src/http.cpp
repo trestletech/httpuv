@@ -28,8 +28,11 @@ http_parser_settings& request_settings() {
 
 void on_response_written(uv_write_t* handle, int status) {
   HttpResponse* pResponse = (HttpResponse*)handle->data;
-  free(handle);
-  pResponse->onResponseWritten(status);
+  // Only free if we have a real response.
+  if (pResponse != NULL){
+    free(handle);
+    pResponse->onResponseWritten(status);
+  }
 }
 
 uv_buf_t on_alloc(uv_handle_t* handle, size_t suggested_size) {
@@ -265,7 +268,9 @@ int HttpRequest::_on_message_complete(http_parser* pParser) {
   if (!pParser->upgrade) {
     // Deleted in on_response_written
     HttpResponse* pResp = _pWebApplication->getResponse(this);
-    pResp->writeResponse();
+    if (pResp != NULL){
+      pResp->writeResponse();
+    }
   }
 
   return 0;

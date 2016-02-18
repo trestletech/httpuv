@@ -111,7 +111,6 @@ rookCall <- function(func, req, data = NULL, dataLength = -1) {
 
     if (is.null(resp) || length(resp) == 0)
       return(NULL)
-    
     # Coerce all headers to character
     resp$headers <- lapply(resp$headers, paste)
     
